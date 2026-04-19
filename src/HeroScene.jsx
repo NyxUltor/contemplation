@@ -4,6 +4,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { CSS3DObject, CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 
 const TABLET_RADIUS = 3.5
+const FLUTE_COUNT = 18
+const FLUTE_DEPTH = 0.045
+const MIN_PARTICLE_SPEED = 0.004
+const PARTICLE_SPEED_RANGE = 0.004
+
 const TABLET_DATA = [
   { key: 'about', y: 6, angleDeg: 45 },
   { key: 'work', y: 2, angleDeg: 135 },
@@ -213,7 +218,7 @@ function HeroScene({ scrollProgress }) {
       const x = position.getX(i)
       const z = position.getZ(i)
       const theta = Math.atan2(z, x)
-      const radial = 1 + Math.sin(theta * 18) * 0.045
+      const radial = 1 + Math.sin(theta * FLUTE_COUNT) * FLUTE_DEPTH
       position.setX(i, x * radial)
       position.setZ(i, z * radial)
     }
@@ -314,7 +319,7 @@ function HeroScene({ scrollProgress }) {
       particlePositions[i3] = (Math.random() - 0.5) * 20
       particlePositions[i3 + 1] = Math.random() * 18
       particlePositions[i3 + 2] = (Math.random() - 0.5) * 20
-      particleSpeeds[i] = 0.004 + Math.random() * 0.004
+      particleSpeeds[i] = MIN_PARTICLE_SPEED + Math.random() * PARTICLE_SPEED_RANGE
     }
 
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3))

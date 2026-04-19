@@ -1,6 +1,10 @@
+:root {
+  --scroll-height: 520vh;
+}
+
 .app-root {
   position: relative;
-  min-height: 520vh;
+  min-height: var(--scroll-height);
 }
 
 .scene-layer {
@@ -30,7 +34,7 @@
 }
 
 .scroll-space {
-  height: 520vh;
+  height: var(--scroll-height);
 }
 
 .scroll-line {
