@@ -3,17 +3,21 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { CSS3DObject, CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 
-const TABLET_RADIUS = 3.5
+const TABLET_RADIUS = 6
 const FLUTE_COUNT = 18
 const FLUTE_DEPTH = 0.045
 const MIN_PARTICLE_SPEED = 0.004
 const PARTICLE_SPEED_RANGE = 0.004
+const CAMERA_ORBIT_RADIUS = Math.sqrt(8 ** 2 + 8 ** 2)
+const CAMERA_START_ANGLE = Math.PI / 4
+const CAMERA_AUTO_ORBIT_SPEED = 0.12
+const CAMERA_SCROLL_ORBIT_TURNS = 1.2
 
 const TABLET_DATA = [
-  { key: 'about', y: 6, angleDeg: 45 },
-  { key: 'work', y: 2, angleDeg: 135 },
-  { key: 'services', y: -2, angleDeg: 225 },
-  { key: 'hire', y: -6, angleDeg: 315 },
+  { key: 'about', y: 8, angleDeg: 45 },
+  { key: 'work', y: 5, angleDeg: 135 },
+  { key: 'services', y: 2, angleDeg: 225 },
+  { key: 'hire', y: -1, angleDeg: 315 },
 ]
 
 function featherShape(length, width, bend) {
@@ -171,7 +175,8 @@ function HeroScene({ scrollProgress }) {
     const cssScene = new THREE.Scene()
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 120)
-    camera.position.set(8, 6, 0)
+    camera.position.set(8, 12, 8)
+    camera.lookAt(0, 4, 0)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -211,7 +216,7 @@ function HeroScene({ scrollProgress }) {
       metalness: 0.02,
     })
 
-    const columnGeometry = new THREE.CylinderGeometry(0.95, 1.08, 12, 120, 84)
+    const columnGeometry = new THREE.CylinderGeometry(0.95, 1.08, 10, 120, 84)
     const position = columnGeometry.attributes.position
 
     for (let i = 0; i < position.count; i += 1) {
@@ -227,25 +232,25 @@ function HeroScene({ scrollProgress }) {
     columnGeometry.computeVertexNormals()
 
     const column = new THREE.Mesh(columnGeometry, stoneMaterial)
-    column.position.y = 1
+    column.position.y = 5
     column.castShadow = true
     column.receiveShadow = true
     scene.add(column)
 
     const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.85, 1.65, 1.5, 64), stoneMaterial)
-    plinth.position.y = -5.9
+    plinth.position.y = -0.75
     plinth.castShadow = true
     plinth.receiveShadow = true
     scene.add(plinth)
 
     const capital = new THREE.Mesh(new THREE.TorusGeometry(1.28, 0.16, 24, 96), stoneMaterial)
     capital.rotation.x = Math.PI / 2
-    capital.position.y = 7.2
+    capital.position.y = 10
     capital.castShadow = true
     scene.add(capital)
 
     const statueAnchor = new THREE.Group()
-    statueAnchor.position.set(0, 7.85, 0)
+    statueAnchor.position.set(0, 10.5, 0)
     scene.add(statueAnchor)
 
     const fallbackStatue = createFallbackStatue()
@@ -359,11 +364,18 @@ function HeroScene({ scrollProgress }) {
       const elapsed = clock.getElapsedTime()
       const progress = scrollRef.current
 
-      const angle = elapsed * 0.12 + progress * Math.PI * 2.4
-      const radius = 8
-      const height = 8 - progress * 16
-      camera.position.set(Math.cos(angle) * radius, height, Math.sin(angle) * radius)
-      camera.lookAt(0, 1, 0)
+      const clampedProgress = THREE.MathUtils.clamp(progress, 0, 1)
+      const cameraAngle =
+        CAMERA_START_ANGLE +
+        elapsed * CAMERA_AUTO_ORBIT_SPEED +
+        clampedProgress * Math.PI * 2 * CAMERA_SCROLL_ORBIT_TURNS
+      const cameraHeight = 12 - clampedProgress * 16
+      camera.position.set(
+        Math.cos(cameraAngle) * CAMERA_ORBIT_RADIUS,
+        cameraHeight,
+        Math.sin(cameraAngle) * CAMERA_ORBIT_RADIUS,
+      )
+      camera.lookAt(0, 4, 0)
 
       const pulse = 1.4 + (Math.sin(elapsed * 1.1) * 0.5 + 0.5) * 1.1
       wingLight.intensity = pulse
@@ -376,7 +388,17 @@ function HeroScene({ scrollProgress }) {
       }
       attrs.needsUpdate = true
 
-      for (const tablet of tabletObjects) {
+      const tabletOrbitAngle = elapsed * CAMERA_AUTO_ORBIT_SPEED
+      for (let i = 0; i < tabletObjects.length; i += 1) {
+        const tablet = tabletObjects[i]
+        const tabletData = TABLET_DATA[i]
+        const baseAngle = THREE.MathUtils.degToRad(tabletData.angleDeg)
+        const angle = baseAngle + tabletOrbitAngle
+        tablet.position.set(
+          Math.cos(angle) * TABLET_RADIUS,
+          tabletData.y,
+          Math.sin(angle) * TABLET_RADIUS,
+        )
         tablet.lookAt(camera.position)
       }
 
