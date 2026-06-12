@@ -1,15 +1,20 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { createPillar, PILLAR_HEIGHT, PILLAR_CENTER_Y } from './pillar.js'
+import { createPillar, PILLAR_HEIGHT } from './pillar.js'
 import { createSky } from './sky.js'
 
 const CAMERA_ORBIT_RADIUS = 7
 const CAMERA_START_ANGLE = Math.PI / 6
-const CAMERA_AUTO_ORBIT_SPEED = 0.08
 const CAMERA_SCROLL_ORBIT_TURNS = 0.6
-const CAMERA_HEIGHT_TOP = PILLAR_CENTER_Y + 1.4
-const CAMERA_HEIGHT_BOTTOM = PILLAR_CENTER_Y - 1.6
-const LOOK_AT_Y = PILLAR_CENTER_Y
+const CAMERA_HEIGHT_TOP = PILLAR_HEIGHT - 4
+const CAMERA_HEIGHT_BOTTOM = 8
+const LOOK_DOWN_ANGLE = THREE.MathUtils.degToRad(25)
+const LOOK_AT_DROP = CAMERA_ORBIT_RADIUS * Math.tan(LOOK_DOWN_ANGLE)
+
+// blood drip: slides from near the top of the shaft to the ground, scroll-driven
+const DRIP_TOP_Y = PILLAR_HEIGHT - 2
+const DRIP_BOTTOM_Y = -0.6
+const DRIP_HIDE_PROGRESS = 0.97
 
 const MIN_PARTICLE_SPEED = 0.003
 const PARTICLE_SPEED_RANGE = 0.003
@@ -43,12 +48,12 @@ function Scene({ scrollProgress }) {
 
     scene.add(createSky())
 
-    const ambient = new THREE.AmbientLight(0xcfe0f0, 0.55)
+    const ambient = new THREE.AmbientLight(0xcfe0f0, 0.85)
     scene.add(ambient)
 
-    // ~10am sun: moderate elevation, warm-white, from one side
-    const sun = new THREE.DirectionalLight(0xfff2dd, 2.4)
-    sun.position.set(10, 14, 6)
+    // ~10am sun: higher elevation, warm-white
+    const sun = new THREE.DirectionalLight(0xfff2dd, 2.1)
+    sun.position.set(9, 22, 7)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
     sun.shadow.camera.near = 1
@@ -60,10 +65,26 @@ function Scene({ scrollProgress }) {
     sun.shadow.bias = -0.0004
     scene.add(sun)
 
-    const skyFill = new THREE.HemisphereLight(0xbcd9f2, 0x9a917f, 0.4)
+    // soft fill from the opposite side so the shadow side doesn't go too dark
+    const fill = new THREE.DirectionalLight(0xcfe0f5, 0.7)
+    fill.position.set(-9, 10, -6)
+    scene.add(fill)
+
+    const skyFill = new THREE.HemisphereLight(0xbcd9f2, 0x9a917f, 0.6)
     scene.add(skyFill)
 
     scene.add(createPillar())
+
+    // blood drip: small wet-looking drop on the pillar surface, slides down with scroll
+    const dripMaterial = new THREE.MeshStandardMaterial({
+      color: 0x5c0c10,
+      roughness: 0.25,
+      metalness: 0.1,
+    })
+    const drip = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), dripMaterial)
+    drip.scale.set(1, 1.6, 1)
+    drip.position.set(0, DRIP_TOP_Y, 0.98)
+    scene.add(drip)
 
     // dust motes in sunlight
     const particleCount = 160
@@ -92,17 +113,11 @@ function Scene({ scrollProgress }) {
     scene.add(particles)
 
     let rafId = 0
-    const clock = new THREE.Clock()
-
     const render = () => {
       rafId = requestAnimationFrame(render)
-      const elapsed = clock.getElapsedTime()
       const progress = THREE.MathUtils.clamp(scrollRef.current, 0, 1)
 
-      const cameraAngle =
-        CAMERA_START_ANGLE +
-        elapsed * CAMERA_AUTO_ORBIT_SPEED +
-        progress * Math.PI * 2 * CAMERA_SCROLL_ORBIT_TURNS
+      const cameraAngle = CAMERA_START_ANGLE + progress * Math.PI * 2 * CAMERA_SCROLL_ORBIT_TURNS
       const cameraHeight = THREE.MathUtils.lerp(CAMERA_HEIGHT_TOP, CAMERA_HEIGHT_BOTTOM, progress)
 
       camera.position.set(
@@ -110,7 +125,10 @@ function Scene({ scrollProgress }) {
         cameraHeight,
         Math.sin(cameraAngle) * CAMERA_ORBIT_RADIUS,
       )
-      camera.lookAt(0, LOOK_AT_Y, 0)
+      camera.lookAt(0, cameraHeight - LOOK_AT_DROP, 0)
+
+      drip.position.y = THREE.MathUtils.lerp(DRIP_TOP_Y, DRIP_BOTTOM_Y, progress)
+      drip.visible = progress < DRIP_HIDE_PROGRESS
 
       const attrs = particleGeometry.attributes.position
       for (let i = 0; i < particleCount; i += 1) {

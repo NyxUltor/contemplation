@@ -3,15 +3,39 @@ import * as THREE from 'three'
 const FLUTE_COUNT = 20
 const FLUTE_DEPTH = 0.04
 
-export const PILLAR_HEIGHT = 6
-export const PILLAR_CENTER_Y = 3
+export const PILLAR_HEIGHT = 14
+export const PILLAR_CENTER_Y = PILLAR_HEIGHT / 2
 
 export function createPillar() {
   const group = new THREE.Group()
 
+  const textureLoader = new THREE.TextureLoader()
+
+  // NOTE: filenames assume ambientCG's default export naming for Concrete034 2K-JPG.
+  // If textures don't appear, check the actual filenames in /public/textures/
+  // and adjust the paths below to match.
+  const colorMap = textureLoader.load('/textures/Concrete034_2K-JPG_Color.jpg')
+  colorMap.colorSpace = THREE.SRGBColorSpace
+  colorMap.wrapS = THREE.RepeatWrapping
+  colorMap.wrapT = THREE.RepeatWrapping
+  colorMap.repeat.set(3, 8)
+
+  const normalMap = textureLoader.load('/textures/Concrete034_2K-JPG_NormalGL.jpg')
+  normalMap.wrapS = THREE.RepeatWrapping
+  normalMap.wrapT = THREE.RepeatWrapping
+  normalMap.repeat.set(3, 8)
+
+  const roughnessMap = textureLoader.load('/textures/Concrete034_2K-JPG_Roughness.jpg')
+  roughnessMap.wrapS = THREE.RepeatWrapping
+  roughnessMap.wrapT = THREE.RepeatWrapping
+  roughnessMap.repeat.set(3, 8)
+
   const stoneMaterial = new THREE.MeshStandardMaterial({
-    color: 0xcdc7ba,
-    roughness: 0.92,
+    map: colorMap,
+    normalMap,
+    roughnessMap,
+    color: 0xe6e1d6,
+    roughness: 1,
     metalness: 0.02,
   })
 
@@ -48,7 +72,7 @@ export function createPillar() {
 
   const ground = new THREE.Mesh(
     new THREE.CircleGeometry(14, 64),
-    new THREE.MeshStandardMaterial({ color: 0xb9b0a0, roughness: 0.95 }),
+    new THREE.MeshStandardMaterial({ color: 0x5e7a4a, roughness: 0.95 }),
   )
   ground.rotation.x = -Math.PI / 2
   ground.position.y = -0.5

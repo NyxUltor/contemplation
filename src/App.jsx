@@ -64,23 +64,6 @@ function App() {
         <span className="cursor-pulse" />
       </div>
 
-      <div className="hero-overlay">
-        <p className="availability">Available for work</p>
-        <h1 className="hero-title">I build things</h1>
-        <h1 className="hero-title hero-title-italic">that work.</h1>
-        <a
-          href="https://github.com/NyxUltor"
-          target="_blank"
-          rel="noreferrer"
-          className="hero-button"
-          data-interactive="true"
-        >
-          GitHub
-        </a>
-      </div>
-
-      <p className="scroll-hint">scroll ↓</p>
-
       <div className={`loading-overlay ${loaded ? 'is-hidden' : ''}`} role="status" aria-live="polite">
         Summoning the scene...
       </div>
