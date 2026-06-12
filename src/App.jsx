@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import HeroScene from './HeroScene'
+import Scene from './scene/Scene'
 import './App.css'
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
   return (
     <div className="app-root">
       <div className="scene-layer">
-        <HeroScene scrollProgress={scrollProgress} />
+        <Scene scrollProgress={scrollProgress} />
       </div>
 
       <div className="scroll-space" aria-hidden="true" />

@@ -18,19 +18,9 @@
   inset: 0;
 }
 
-.webgl-layer,
-.css3d-layer {
+.webgl-layer {
   position: absolute;
   inset: 0;
-}
-
-.css3d-layer {
-  pointer-events: none;
-}
-
-.css3d-layer .tablet,
-.css3d-layer .tablet * {
-  pointer-events: auto;
 }
 
 .scroll-space {
@@ -134,7 +124,7 @@
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(52px, 8.5vw, 108px);
   font-weight: 300;
-  color: rgba(226, 221, 214, 0.88);
+  color: rgba(40, 36, 32, 0.88);
   pointer-events: none;
 }
 
@@ -153,17 +143,16 @@
   font-size: 13px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #e2ddd6;
+  color: #2c2722;
   text-decoration: none;
   border: 1px solid rgba(184, 69, 58, 0.9);
-  background: rgba(9, 8, 10, 0.25);
+  background: rgba(255, 255, 255, 0.25);
   pointer-events: auto;
   transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
 }
 
 .hero-button:hover {
-  color: #e2ddd6;
-  background: rgba(184, 69, 58, 0.22);
+  background: rgba(184, 69, 58, 0.18);
   border-color: #b8453a;
 }
 
@@ -172,7 +161,7 @@
   left: clamp(20px, 4vw, 72px);
   bottom: clamp(26px, 4vh, 42px);
   margin: 0;
-  color: rgba(226, 221, 214, 0.52);
+  color: rgba(40, 36, 32, 0.5);
   font-family: 'IM Fell English', serif;
   letter-spacing: 2px;
   text-transform: lowercase;
@@ -196,8 +185,8 @@
   z-index: 40;
   display: grid;
   place-items: center;
-  background: rgba(6, 5, 7, 1);
-  color: #e2ddd6;
+  background: #eef0e8;
+  color: #2c2722;
   font-family: 'IM Fell English', serif;
   font-size: clamp(20px, 2.1vw, 30px);
   letter-spacing: 0.05em;
@@ -207,166 +196,6 @@
 .loading-overlay.is-hidden {
   opacity: 0;
   pointer-events: none;
-}
-
-.tablet {
-  width: 420px;
-  min-height: 250px;
-  padding: 22px;
-  color: #e2ddd6;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 60px rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-}
-
-.tablet p,
-.tablet h2,
-.tablet h3,
-.tablet li,
-.tablet a {
-  margin: 0;
-  color: inherit;
-}
-
-.tablet-about-copy {
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: 31px;
-  line-height: 1.35;
-  color: rgba(226, 221, 214, 0.85);
-}
-
-.tablet-heading {
-  margin-bottom: 14px;
-  font-family: 'IM Fell English', serif;
-  font-size: 46px;
-  font-weight: 400;
-}
-
-.work-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.work-item {
-  position: relative;
-  padding: 12px 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.16);
-  overflow: hidden;
-}
-
-.work-item::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 100%;
-  background: #b8453a;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 220ms ease;
-}
-
-.work-item:hover::after {
-  clip-path: inset(0 0 0 0);
-}
-
-.work-tag {
-  font-family: 'Courier Prime', monospace;
-  text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: rgba(210, 200, 185, 0.72);
-  margin-bottom: 6px;
-}
-
-.work-item h3 {
-  font-family: 'IM Fell English', serif;
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
-.work-item p {
-  font-family: 'IM Fell English', serif;
-  font-size: 15px;
-  line-height: 1.4;
-  color: rgba(226, 221, 214, 0.86);
-}
-
-.services-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.services-list li {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 10px;
-}
-
-.service-title {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 4px;
-  font-family: 'IM Fell English', serif;
-  font-size: 24px;
-  color: #e2ddd6;
-}
-
-.services-list li p {
-  font-family: 'IM Fell English', serif;
-  font-size: 16px;
-  line-height: 1.4;
-  color: rgba(226, 221, 214, 0.82);
-}
-
-.hire-inner {
-  min-height: 206px;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 10px;
-  text-align: center;
-}
-
-.hire-question {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px;
-  font-style: italic;
-  line-height: 0.95;
-}
-
-.hire-copy {
-  font-family: 'IM Fell English', serif;
-  font-size: 24px;
-}
-
-.hire-inner a {
-  margin-top: 4px;
-  display: inline-flex;
-  padding: 8px 15px;
-  font-family: 'IM Fell English', serif;
-  font-size: 13px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #e2ddd6;
-  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
-}
-
-.hire-inner a:hover {
-  color: #b8453a;
-  border-color: #b8453a;
-  background: rgba(184, 69, 58, 0.08);
 }
 
 @media (max-width: 920px) {
